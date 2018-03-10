@@ -22,7 +22,7 @@ class App extends Component {
   render() {
     return (
       <Fragment>
-        <Cabecalho usuario="@omariosouto" />
+        <Cabecalho usuario="@slipalison" />
         <div className="container">
           <Dashboard>
             <Widget>
