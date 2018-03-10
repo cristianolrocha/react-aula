@@ -9,14 +9,58 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
-      novoTweet: ''
+      novoTweet: '',
+      tweets: [],
+      loading: true
     }
 
-
-    console.log('may eggs', this.state.novoTweet.length)
+    this.addTweet = this.addTweet.bind(this)
+    this.list = this.list.bind(this)
   }
+
+  componentDidMount() {
+    setInterval(() => {
+      fetch('https://twitelum-api.herokuapp.com/tweets')
+        .then(resposta => resposta.json())
+        .then(tweets => { this.setState({ tweets: tweets, loading: false }) })
+    }, 10000)
+  }
+
   isValid() {
     return this.state.novoTweet.length > 40
+  }
+
+  tweetValid = async () => {
+    let tamanho = this.state.novoTweet.length
+    return tamanho < 140 && tamanho > 0
+  }
+
+  addTweet = async (e) => {
+    e.preventDefault()
+    if (!this.tweetValid()) return
+
+    fetch('https://twitelum-api.herokuapp.com/tweets', {
+      method: 'POST',
+      body: JSON.stringify({ conteudo: this.state.novoTweet, login: 'omariosouto' })
+    }).then((response) => response.json())
+      .then((tweetServer) => {
+        this.setState({
+          tweets: [tweetServer, ...this.state.tweets],
+          novoTweet: ''
+        })
+      })
+    this.setState({
+      novoTweet: ''
+    })
+  }
+
+  list() {
+    console.log(this)
+    if (this.state.tweets.length > 0)
+      return (this.state.tweets.map(tweet => <Tweet key={tweet._id} conteudo={tweet.conteudo} tweetInfo={tweet} />))
+    else {
+      return (<h1><marquee>Não tem biscoito!</marquee></h1>)
+    }
   }
 
   render() {
@@ -26,7 +70,7 @@ class App extends Component {
         <div className="container">
           <Dashboard>
             <Widget>
-              <form className="novoTweet">
+              <form onSubmit={this.addTweet} className="novoTweet">
                 <div className="novoTweet__editorArea">
                   <span className={
                     `novoTweet__status ${this.isValid() ? 'novoTweet__status--invalido' : ''}`
@@ -50,7 +94,7 @@ class App extends Component {
           <Dashboard posicao="centro">
             <Widget>
               <div className="tweetsArea">
-                <Tweet />
+                {this.list()}
               </div>
             </Widget>
           </Dashboard>
@@ -59,5 +103,4 @@ class App extends Component {
     );
   }
 }
-
 export default App;
