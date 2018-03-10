@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment } from 'react'
 import Cabecalho from './components/Cabecalho'
 import Dashboard from './components/Dashboard'
 import Widget from './components/Widget'
