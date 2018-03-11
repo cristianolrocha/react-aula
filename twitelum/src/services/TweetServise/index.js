@@ -1,4 +1,5 @@
 import React from 'react'
+import 'bulma/css/bulma.css'
 
 export default class TweetService extends React.Component {
 
@@ -27,6 +28,12 @@ export default class TweetService extends React.Component {
         const url = `${this.url}usuarios/${login}`
         return await this._get(url)
     }
+
+    getUser = () => {
+        let items = ['artdiniz', 'omariosouto', 'vanessametonini', 'marcobrunobr'];
+        return items[Math.floor(Math.random() * items.length)];
+    }
+
 
     _get = async (url) => {
         const response = await fetch(url, { method: 'GET' })

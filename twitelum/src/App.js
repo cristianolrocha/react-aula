@@ -29,7 +29,7 @@ class App extends Component {
   }
 
   isValid = () => {
-    return this.state.novoTweet.length > 40
+    return this.state.novoTweet.length > 140
   }
 
   tweetValid = () => {
@@ -41,7 +41,7 @@ class App extends Component {
     e.preventDefault()
     if (!this.tweetValid()) return
     // faz um random na lista de logins disponiveis 
-    var login = this.getUser();
+    var login = this.service.getUser();
 
     var tweetServer = await this.service.sendTweet(this.state.novoTweet, login)
     this.setState({
@@ -50,10 +50,6 @@ class App extends Component {
     })
   }
 
-  getUser = () => {
-    let items = ['artdiniz', 'omariosouto', 'vanessametonini', 'marcobrunobr'];
-    return items[Math.floor(Math.random() * items.length)];
-  }
 
   list = () => {
     return this.state.tweets.length > 0 ?
@@ -64,7 +60,7 @@ class App extends Component {
   render() {
     return (
       <Fragment>
-        <Cabecalho usuario="@slipalison" />
+        <Cabecalho usuario="@omariosouto" />
         <div className="container">
           <Dashboard>
             <Widget>
