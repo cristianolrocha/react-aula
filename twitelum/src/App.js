@@ -5,6 +5,7 @@ import Widget from './components/Widget'
 import TrendsArea from './components/TrendsArea'
 import Tweet from './components/Tweet'
 import TweetService from './services/TweetServise'
+import { Link } from 'react-router-dom'
 
 class App extends Component {
   constructor() {
@@ -19,11 +20,11 @@ class App extends Component {
 
   componentDidMount = async () => {
     //chama a primeira vez rapido
-    var s = await this.service.getAll()
+    const s = await this.service.getAll()
     this.setState({ tweets: s, loading: false })
     //chama no loop    
     setInterval(async () => {
-      var s = await this.service.getAll()
+      const s = await this.service.getAll()
       this.setState({ tweets: s, loading: false })
     }, 5000)
   }
@@ -41,9 +42,9 @@ class App extends Component {
     e.preventDefault()
     if (!this.tweetValid()) return
     // faz um random na lista de logins disponiveis 
-    var login = this.service.getUser();
+    const login = this.service.getUser();
 
-    var tweetServer = await this.service.sendTweet(this.state.novoTweet, login)
+    const tweetServer = await this.service.sendTweet(this.state.novoTweet, login)
     this.setState({
       tweets: [tweetServer, ...this.state.tweets],
       novoTweet: ''
@@ -53,8 +54,31 @@ class App extends Component {
 
   list = () => {
     return this.state.tweets.length > 0 ?
-      (this.state.tweets.map(tweet => <Tweet key={tweet._id} conteudo={tweet.conteudo} tweetInfo={tweet} />)) :
+      (this.state.tweets.map(tweet => <Tweet key={tweet._id} conteudo={this.linkfy(tweet.conteudo)} tweetInfo={tweet} />)) :
       (<h1><marquee>Não tem biscoito!</marquee></h1>)
+  }
+
+  linkfy = (text) => {
+    if (typeof text === 'string') {
+      const words = text.split(/\s/);
+      const contents = words.map(function (word, i) {
+        const separator = i < (words.length - 1) ? ' ' : '';
+        if (word.match(/^https?\:\//)) {
+          console.log(word)
+          return (<a key={i} href={word}>{word}{separator}</a>)
+        } else {
+          return word + separator;
+        }
+      });
+      return (
+        <Fragment>
+          {contents}
+        </Fragment>
+      );
+    } else {
+      console.log('Attempted to use <HyperText> with nested components. This component only supports plain text children.');
+      return <Fragment>{text}</Fragment>;
+    }
   }
 
   render() {

@@ -15,7 +15,7 @@ class Tweet extends Component {
           <span className="tweet__nomeUsuario">{usuario.nome}</span>
           <Link to={`/${usuario.login}`}><span className="tweet__userName">@{usuario.login}</span></Link>
         </div>
-        <p className="tweet__conteudo">{tweetInfo.conteudo}</p>
+        <p className="tweet__conteudo">{this.props.conteudo}</p>
         <footer className="tweet__footer">
           <button className="btn btn--clean">
             <svg className="icon icon--small iconHeart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 47.5 47.5">
