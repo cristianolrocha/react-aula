@@ -4,6 +4,7 @@ import Dashboard from './components/Dashboard'
 import Widget from './components/Widget'
 import TrendsArea from './components/TrendsArea'
 import Tweet from './components/Tweet'
+import TweetService from './services/TweetServise'
 
 class App extends Component {
   constructor() {
@@ -13,24 +14,25 @@ class App extends Component {
       tweets: [],
       loading: true
     }
-
-    this.addTweet = this.addTweet.bind(this)
-    this.list = this.list.bind(this)
+    this.service = new TweetService()
   }
 
-  componentDidMount() {
-    setInterval(() => {
-      fetch('https://twitelum-api.herokuapp.com/tweets')
-        .then(resposta => resposta.json())
-        .then(tweets => { this.setState({ tweets: tweets, loading: false }) })
-    }, 10000)
+  componentDidMount = async () => {
+    //chama a primeira vez rapido
+    var s = await this.service.getAll()
+    this.setState({ tweets: s, loading: false })
+    //chama no loop    
+    setInterval(async () => {
+      var s = await this.service.getAll()
+      this.setState({ tweets: s, loading: false })
+    }, 5000)
   }
 
-  isValid() {
+  isValid = () => {
     return this.state.novoTweet.length > 40
   }
 
-  tweetValid = async () => {
+  tweetValid = () => {
     let tamanho = this.state.novoTweet.length
     return tamanho < 140 && tamanho > 0
   }
@@ -38,29 +40,25 @@ class App extends Component {
   addTweet = async (e) => {
     e.preventDefault()
     if (!this.tweetValid()) return
+    // faz um random na lista de logins disponiveis 
+    var login = this.getUser();
 
-    fetch('https://twitelum-api.herokuapp.com/tweets', {
-      method: 'POST',
-      body: JSON.stringify({ conteudo: this.state.novoTweet, login: 'omariosouto' })
-    }).then((response) => response.json())
-      .then((tweetServer) => {
-        this.setState({
-          tweets: [tweetServer, ...this.state.tweets],
-          novoTweet: ''
-        })
-      })
+    var tweetServer = await this.service.sendTweet(this.state.novoTweet, login)
     this.setState({
+      tweets: [tweetServer, ...this.state.tweets],
       novoTweet: ''
     })
   }
 
-  list() {
-    console.log(this)
-    if (this.state.tweets.length > 0)
-      return (this.state.tweets.map(tweet => <Tweet key={tweet._id} conteudo={tweet.conteudo} tweetInfo={tweet} />))
-    else {
-      return (<h1><marquee>Não tem biscoito!</marquee></h1>)
-    }
+  getUser = () => {
+    let items = ['artdiniz', 'omariosouto', 'vanessametonini', 'marcobrunobr'];
+    return items[Math.floor(Math.random() * items.length)];
+  }
+
+  list = () => {
+    return this.state.tweets.length > 0 ?
+      (this.state.tweets.map(tweet => <Tweet key={tweet._id} conteudo={tweet.conteudo} tweetInfo={tweet} />)) :
+      (<h1><marquee>Não tem biscoito!</marquee></h1>)
   }
 
   render() {
@@ -72,9 +70,7 @@ class App extends Component {
             <Widget>
               <form onSubmit={this.addTweet} className="novoTweet">
                 <div className="novoTweet__editorArea">
-                  <span className={
-                    `novoTweet__status ${this.isValid() ? 'novoTweet__status--invalido' : ''}`
-                  }>{this.state.novoTweet.length}/140</span>
+                  <span className={`novoTweet__status ${this.isValid() ? 'novoTweet__status--invalido' : ''}`}>{this.state.novoTweet.length}/140</span>
                   <textarea
                     onChange={(e) => { this.setState({ novoTweet: e.target.value }) }}
                     value={this.state.novoTweet}

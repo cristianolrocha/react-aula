@@ -7,8 +7,7 @@ class Tweet extends Component {
   render() {
     const { tweetInfo } = this.props
     const { usuario } = this.props.tweetInfo
-    console.log(usuario)
-    console.log(tweetInfo)
+
     return (
       <article className="tweet">
         <div className="tweet__cabecalho">
