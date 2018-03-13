@@ -1,5 +1,6 @@
 # react-aula
 por que react?
+
 . organização
 . sites com muitas atualizações
 . fluidez por ser SPA
@@ -7,7 +8,10 @@ por que react?
 . componentes (ver organização)
 . estado
 . erros react são bem organizados
+
+
 algumas coisas dentro do react
+
 . fragment: torna  "div" root desnecessária
 . helmet: mexer nos heads das páginas
   - problema:  manipular diversas outras informações no head de uma página específica (como meta tags entre algumas outras configurações)
@@ -15,7 +19,10 @@ algumas coisas dentro do react
     * inserir dentro do return do método render no meio do componente, passando um atributo title para modificar o título
       ou adicionar outras informações no head da página
     * pode injetar informações que vem via ajax por meio do setstate do react
+
+
 e mais
+
 . react era uma treta para configurar
   - investir tempo para aprender a configurar, 
     só depois de muito tempo ambiente estava pronto
